@@ -1,0 +1,704 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# # How to be a successful YouTuber
+
+# ### Today we use the power of data analysis to manifest the best way to gain views, likes, and subscribers on YouTube!
+
+# In[2]:
+import pandas as pd
+from pandas.api.types import is_numeric_dtype
+import numpy as np
+import plotly.express as px
+import googletrans as gt
+import datetime as dt
+from time import sleep
+import streamlit as st
+from streamlit_option_menu import option_menu
+
+st.set_page_config(layout="wide")
+
+USvids = pd.read_csv('USvideos.csv')
+GBvids = pd.read_csv("GBvideos.csv")
+RUvids = pd.read_csv("RUvideos.csv", encoding = "utf-8")
+USvids["description"] = USvids["description"].fillna("No description")
+US_json = pd.read_json("US_category_id.json", orient = "records")
+US_json_items = US_json["items"]
+USvids["trending_date"] = pd.to_datetime(USvids["trending_date"], format = "%y.%d.%m")
+USvids["publish_time"] = pd.to_datetime(USvids["publish_time"])
+USvids["like_dislike_ratio"] = (USvids["likes"]+1) / (USvids["dislikes"]+1)
+GBvids["description"] = GBvids["description"].fillna("No description")
+GB_json = pd.read_json("GB_category_id.json", orient = "records")
+GB_json_items = GB_json["items"]
+category_dic = {}
+def category_extractor(key): return (int(key["id"]),key["snippet"]["title"])
+lot = []
+for rows in US_json_items: lot.append(category_extractor(rows))
+dict_lot = dict(lot)
+USvids["category"] = USvids["category_id"].replace(dict_lot)
+lot = []
+for rows in GB_json_items: lot.append(category_extractor(rows))
+dict_lot = dict(lot)
+GBvids["category"] = GBvids["category_id"].replace(dict_lot)
+GBvids["trending_date"] = pd.to_datetime(GBvids["trending_date"], format = "%y.%d.%m")
+GBvids["publish_time"] = pd.to_datetime(GBvids["publish_time"])
+GBvids["like_dislike_ratio"] = (GBvids["likes"]+1) / (GBvids["dislikes"]+1)
+RUvids = pd.read_csv("RUvideos.csv")
+RUvids["description"] = RUvids["description"].fillna("No description")
+RUvids["trending_date"] = pd.to_datetime(RUvids["trending_date"], format = "%y.%d.%m")
+RUvids["publish_time"] = pd.to_datetime(RUvids["publish_time"])
+RUvids = RUvids.rename({"title": "russian_title"}, axis=1)
+RUvids.index.name = "id"
+RUvids.reset_index(inplace = True)
+RUvids = RUvids.merge(pd.read_csv("RUvids_inEN.csv").rename({"Unnamed: 0": "id", "0": "title"}, axis=1), on="id")
+lot = []
+for rows in GB_json_items: lot.append(category_extractor(rows))
+dict_lot = dict(lot)
+RUvids["category"] = RUvids["category_id"].replace(dict_lot)
+RUvids["like_dislike_ratio"] = (RUvids["likes"]+1) / (RUvids["dislikes"]+1)
+USvids["country"] = "US"
+GBvids["country"] = "GB"
+RUvids["country"] = "RU"
+combined_vids = pd.concat([USvids,GBvids,RUvids.drop("russian_title", axis=1)]).reset_index(drop = True).drop("id", axis=1)
+combined_nodupe = combined_vids.drop_duplicates(subset=['video_id']).reset_index(drop = True)
+combined_nodupe["publish_date"] = combined_nodupe["publish_time"].dt.tz_convert(None)
+combined_nodupe["time_to_trending"] = combined_nodupe["trending_date"] - combined_nodupe["publish_date"]
+combined_nodupe["time_to_trending"] = combined_nodupe["time_to_trending"] / ((10 ** 9) * 3600* 24)
+combined_nodupe["time_to_trending_hours"] = (combined_nodupe["trending_date"] - combined_nodupe["publish_date"]) / ((10 ** 9) * 3600)
+combined_nodupe["weekday"] = combined_nodupe["publish_time"].dt.day_name()
+combined_nodupe["month"] = combined_nodupe["publish_time"].dt.month_name()
+combined_nodupe["hour"] = combined_nodupe["publish_time"].dt.hour
+combined_nodupe["is_weekend"] = np.where((combined_nodupe["weekday"] == "Sunday") | (combined_nodupe["weekday"] == "Saturday"), True, False)
+time_of_day = []
+for rows in combined_nodupe["hour"]:
+    hour = rows
+    if hour > 0 and hour <= 6: time_of_day.append("Late night")
+    elif hour > 6 and hour <= 12: time_of_day.append("Morning")
+    elif hour > 12 and hour <= 18: time_of_day.append("Afternoon")
+    else: time_of_day.append("Evening")
+        
+combined_nodupe["time_of_day"] = time_of_day
+combined_nodupe["hour_cat"] = pd.Categorical(combined_nodupe["hour"], categories=np.arange(24), ordered=True)
+
+
+
+with st.sidebar: 
+	selected = option_menu(
+		menu_title = 'Navigation Pane',
+		options = ['Abstract', 'Background Information', 'Data Cleaning','Data Analysis', 'Conclusion', 'Bibliography'],
+		menu_icon = 'box-fill',
+		icons = ['bookmarks', 'book-half', 'person-rolodex','bar-chart', 
+		'check2-circle','card-text'],
+		default_index = 0,
+		)
+    
+
+    
+if selected == "Abstract":
+    st.markdown("# Abstraction of the photosynethesis")
+
+if selected == "Background Information":
+    st.markdown("# Background Informatics")
+if selected == "Data Cleaning":
+    st.markdown("First we import everything")
+    code = """import pandas as pd
+    from pandas.api.types import is_numeric_dtype
+    import numpy as np
+    import plotly.express as px
+    import googletrans as gt
+    import datetime as dt
+    from time import sleep
+    import streamlit as st"""
+    st.code(code, language='python')
+    
+    pd.options.plotting.backend = "plotly"
+    
+    
+    
+    # In[3]:
+    
+    
+    st.markdown("There are many datasets. However, today we will be focusing on videos in the US, the UK, Russia ")
+    code = """USvids = pd.read_csv('USvideos.csv')
+    GBvids = pd.read_csv("GBvideos.csv")
+    RUvids = pd.read_csv("RUvideos.csv", encoding = "utf-8")"""
+
+    USvids.head(5)
+    
+    
+    st.markdown("# Exploring data")
+    
+    # In[4]:
+    
+    
+    st.markdown("We use the .info() to gain understanding of the Dtypes of each column, column names etc.")
+    st.write(USvids.info())
+    
+    
+    # In[5]:
+    
+    
+    st.markdown("Lets also describe the data")
+    st.write(USvids.describe())
+    
+    
+    # In[6]:
+    
+    
+    st.markdown("Lets sort the videos by views and see which are the top scorers in 2017")
+    st.write(USvids.loc[:,["views","channel_title","title"]].sort_values("views", ascending = False).head(5))
+    
+    
+    # In[7]:
+    
+    
+    st.markdown("Hm, there seems to be duplicates in the dataset. We will get back to the duplicates later")
+    
+    
+    # In[ ]:
+    
+    
+    
+    
+    
+    st.markdown("### Cleaning data")
+    st.markdown("#### One code cell for each country. It is important to clean the dataset before we try and find any patterns, correlations. etc.")
+    
+    # In[]:
+    
+    
+    st.markdown("USvids.isnull().sum() Shows that although there are only a few null values in description, there are still much more to be cleaned")
+    st.markdown("Such as renaming the columns, etc.")
+    
+    
+    st.markdown("Lets then #use the json file provided to make a category column based on the category_id column")
+    
+    st.code("""USvids["description"] = USvids["description"].fillna("No description")""", language = "python")
+    st.markdown("Also, USvids.info() shows us that columns that are supposed to be in date time formart are not, but rather os objects (strings) so lets fix that")
+    
+    st.code("""USvids["trending_date"] = pd.to_datetime(USvids["trending_date"], format = "%y.%d.%m")
+        USvids["publish_time"] = pd.to_datetime(USvids["publish_time"])""")
+    
+    st.markdown("Lets then make a like to dislike ratio column!")
+    st.markdown("The +1 for the dislikes is to prevent a division by 0 error. The +1 for the likes is for balancing the +1 on the dislikes")
+    
+    st.markdown("Lets see the finished result!")
+    USvids.head(5)
+    
+    
+    # In[9]:
+    
+    
+    st.markdown("Now that we have finshed with the US dataset, lets move onto GB vids. This should be similar if not the same as what we did above.")
+    
+    st.markdown("We have defined category_extractor in the cell above so we do not need to redifine here!")
+    GBvids.head(5)
+    
+    
+    # In[10]:
+    
+    
+    st.markdown("Now we get the the tricky part. The Russians do not use Latin characters so we couldnt just import it with the same encoding")
+    st.markdown("We used an encoding called 'utf-8' so that it will work!")
+    st.markdown("We fix the trending date and publish time just like before")
+    
+    st.markdown("We also needed to translate the titles of RU vids so that we could read it. This would take about a day to run once so we have")
+    st.markdown("Already ran it and saved it as a file named RUvids_inEN.csv")
+    
+    st.code("""
+    RUtoEN = {}
+    for i,rows in enumerate(RUvids["title"]):
+        try:
+            RUtoEN.update({i: [translator.translate(rows).text]})
+        except:
+            print("This like is die ",i)
+            for j in range(5):
+                sleep(1)
+                try:
+                    RUtoEN.update({i: [translator.translate(rows).text]})
+                    break
+                except:
+                    print("This like is die",i, ": ",j)
+            
+            
+    partial_translation = pd.DataFrame.from_dict(RUtoEN, orient = "index")
+    partial_translation.to_csv("RUvids_inEN.csv")
+    
+    
+    """, language = "python")
+    
+    st.markdown("Now we need to make the titles of the RUvids dataset the titles equal to the RUvids_inEN series to finish translation")
+    RUvids.head(5)
+    
+    
+    st.markdown("#### 2.1 Combinding data")
+    
+    # In[11]:
+    
+    
+    st.markdown("After cleanign the data we need to now combine the data. However, we still need to identify which entry came from")
+    st.markdown("Which country so we will add a new column called: coutnry")
+    
+    st.markdown("Now we combine them into one DataFrame using pd.concat")
+    
+    st.markdown("We can also drop the duplicates of combined_vids")
+    
+    st.markdown("Lets FIX the publish time because it is encoded in UTC!")
+    
+    
+    st.markdown("Lets categorize the publish time by time of day. morning, afternoon, evening, late night")
+    
+    st.markdown("Lets make a column named is_weekend to help us identify weekends easier!! First we need to make a list of weekend days")
+    
+    st.markdown("Great! now we can check if it worked by printing some rows and the info")
+    combined_nodupe.info()
+    combined_nodupe.head(5)
+
+if selected == "Data Analysis":
+    st.markdown("# Exploring data with plotly express")
+    
+    st.markdown("### Making a bar graph")
+    
+    # In[12]:
+    
+    
+    st.markdown("Now we have the cleaned dataset we can use! lets find out how many videos are in each category to learn our competition")
+    category_counts = combined_nodupe["category"].value_counts().reset_index().rename({"category": "counts","index": "category"}, axis=1)
+    fig1 = px.bar(category_counts, x='category', y='counts', hover_data=["counts"], color='counts', height=600, width = 900
+                ,color_continuous_scale=px.colors.sequential.Viridis)
+    
+    st.plotly_chart(fig1)
+    
+    
+    # In[13]:
+    
+    
+    st.markdown("Now lets calculate the average amounts of views the different categories get by using df.groupby")
+    grouped_by_category = combined_nodupe.groupby("category").mean()
+    fig2 = px.bar(grouped_by_category, x=grouped_by_category.index, y='views', color='views', height=600, width = 900
+                ,color_continuous_scale=px.colors.sequential.Viridis)
+    st.plotly_chart(fig2)
+    
+    # In[14]:
+    
+    
+    grouped_by_category_country = combined_nodupe.groupby(["category", "country"]).mean().reset_index(drop=False)
+    grouped_by_category_country["viewsum"] = grouped_by_category_country["views"]
+    fig3 = px.histogram(grouped_by_category_country, x="category", y='views', color='country', height=600, width = 900
+                ,color_discrete_sequence=px.colors.qualitative.Dark24, barmode = "group", barnorm = "percent", hover_name = "viewsum")
+    
+    fig3.update_traces(customdata=grouped_by_category_country["viewsum"][grouped_by_category_country["country"] == "US"], hovertemplate = "Category: %{x} <br> Mean Views: %{customdata}",
+                     selector = dict(type="histogram",offsetgroup = "US"))
+    
+    fig3.update_traces(customdata=grouped_by_category_country["viewsum"][grouped_by_category_country["country"] == "RU"], hovertemplate = "Category: %{x} <br> Mean Views: %{customdata}",
+                     selector = dict(type="histogram",offsetgroup = "RU"))
+    
+    fig3.update_traces(customdata=grouped_by_category_country["viewsum"][grouped_by_category_country["country"] == "GB"], hovertemplate = "Category: %{x} <br> Mean Views: %{customdata}",
+                     selector = dict(type="histogram",offsetgroup = "GB"))
+    st.plotly_chart(fig3)
+                      
+    
+    
+    # In[15]:
+    
+    
+    st.markdown("let's group the dataset by category id to explore the dataset further.")
+    grouped_by_category = combined_nodupe.groupby("category").mean().reset_index()
+    
+    st.markdown("Ok now lets see which types of videos you should post to avoid controversy. For this we need to look at like to dislike ratios!")
+    
+    fig4 = px.bar(grouped_by_category, x="category", y='like_dislike_ratio', height=600, width = 900
+                ,color = "views",color_continuous_scale=px.colors.sequential.Viridis)
+    
+    st.plotly_chart(fig4)
+    
+    
+    
+    # In[16]:
+    
+    
+    st.markdown("As we can see from above, The highest like to dislike ratio category is the Pets and Animals category. This means that people love pets and if you show your pets on camera they will like and subscribe.")
+    st.markdown("Closely behind is Music, which has high production costs thus is not a good choice for people not investing loads")
+    
+    st.markdown("Now lets take a look at the average amount of dislikes, to conclude which one you as a creator should not be creating content on")
+    
+    fig5 = px.bar(grouped_by_category, x="category", y='dislikes', height=600, width = 900
+                ,color_continuous_scale=px.colors.sequential.Viridis,color = "views")
+    st.plotly_chart(fig5)
+    
+    
+    # In[17]:
+    
+    
+    st.markdown("Surprisingly, the one with the highest dislikes are the Nonprofits & Activism category ids. So what is the best type of videos to do?")
+    st.markdown("I have created an ULTIMATE formula to solve this question! By using vectorised functions")
+    
+    factor = 5
+    grouped_by_category["value"] = (((grouped_by_category["likes"]-grouped_by_category["dislikes"]) * factor) + grouped_by_category["views"]) * grouped_by_category["like_dislike_ratio"] 
+    
+    #Now with this great method of  determining which one is the best, lets jump into a bar!
+    
+    fig6 = px.bar(grouped_by_category, x="category", y='value', height=600, width = 900
+                ,color_continuous_scale=px.colors.sequential.Viridis, color="value")
+    st.plotly_chart(fig6)
+    
+    # In[18]:
+    
+    
+    st.markdown("Ok, yeah, its very good to make a Music video but the production cost is way too high! So lets drop it")
+    grouped_by_category_no_music = grouped_by_category.drop(8).reset_index()
+    
+    st.markdown("Ok great, lets test it out with the same bar chart then")
+    
+    fig7 = px.bar(grouped_by_category_no_music, x="category", y='value', height=600, width = 900
+                ,color_continuous_scale=px.colors.sequential.Viridis,color = "value")
+    
+    #Much more even!
+    
+    
+    st.markdown("### making a scatter plot")
+    st.plotly_chart(fig7)
+    
+    # In[19]:
+    
+    
+    st.markdown("scatter plots are great for exploring the correlation between different values so first we need to find the correlation between different values")
+    
+    combined_corr = combined_nodupe.corr()
+    fig8 = px.scatter(combined_nodupe, x="views", y="likes", color='views', height=600, width = 900
+                ,color_continuous_scale=px.colors.sequential.Viridis)
+    
+    
+    st.markdown("### Making a pie chart")
+    st.plotly_chart(fig8)
+    
+    # In[20]:
+    
+    
+    st.markdown("Now lets explroe the distribution of the views between the different category id's with the power of a pie chart")
+    
+    df = combined_nodupe
+    df.loc[df['views'] < 2000000, 'category_id'] = 'Other categories'
+    fig9 = px.pie(df, values='views', names='category_id', title='Views')
+    
+    # 
+    
+    st.markdown("### Making line plots!")
+    st.plotly_chart(fig9)
+    
+    # In[21]:
+    
+    
+    st.markdown("Now lets see how youtube evolved overtime. By using line plots")
+    grouped_by_date_only = combined_nodupe.groupby("trending_date").mean().reset_index()
+    fig10 = px.line(grouped_by_date_only, "trending_date", "views", height=600, width = 900)
+    st.plotly_chart(fig10)
+    
+    
+    # In[22]:
+    
+    
+    st.markdown("WOW! April 14 2018 was a big day for youtube! lets break it down with some categories")
+    grouped_by_date = combined_nodupe.groupby(["trending_date","category"]).mean().reset_index()
+    fig11 = px.line(grouped_by_date, "trending_date", "views", height=600, width = 900, color="category")
+    st.plotly_chart(fig11)
+    
+    
+    # In[23]:
+    
+    
+    st.markdown("WOW! April 14 2018 lets see COUNTRIES")
+    grouped_by_date_country = combined_nodupe.groupby(["trending_date","country"]).mean().reset_index()
+    fig12 = px.line(grouped_by_date_country, "trending_date", "views", height=600, width = 900, color="country")
+    st.plotly_chart(fig12)
+    
+    
+    # In[24]:
+    
+    
+    st.markdown("Lets explore the time taken for videos to trend")
+    fig13 = px.histogram(combined_nodupe, x="time_to_trending", height=600, width = 900
+                ,color_discrete_sequence=px.colors.qualitative.Dark24)
+    st.plotly_chart(fig13)
+    
+    
+    # In[25]:
+    
+    
+    st.markdown("Lets explore the time taken for videos to trend within a week")
+    fig14 = px.histogram(combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(7, units = "days")], x="time_to_trending", height=600, width = 900
+                ,color_discrete_sequence=px.colors.qualitative.Light24, color = "category", barmode = "group")
+    st.plotly_chart(fig14)
+    
+    
+    # In[26]:
+    
+    
+    st.markdown("Lets cell, we explored the distribution regarding how fast the videos trend. So yeah, there are more blogs and entertainment than most of the others combined.")
+    under_7_days = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(7, units = "days")]
+    fig15 = px.bar(under_7_days.value_counts("category"))
+    st.plotly_chart(fig15)
+    
+    
+    # In[27]:
+    
+    
+    st.markdown("Lets now take a look at those videos which take a lot longer to trend. Namely the ones that take over 2 years to resurface on your recommended")
+    over_2_years = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(2, units = "years")]
+    fig16 = px.bar(over_2_years.value_counts("category"))
+    st.plotly_chart(fig16)
+    
+    
+    # In[28]:
+    
+    
+    st.markdown("Finally, lets take a look at the ones that take average time to trend. Above a week and below a month")
+    below_1_month = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(1, units = "months")]
+    fig17 = px.bar(below_1_month.value_counts("category"))
+    st.plotly_chart(fig17)
+    
+    
+    # In[29]:
+    
+    
+    st.markdown("This doesnt really tell us much because there are different amounts of total videos... sad indeed")
+    
+    below_1_week_scaled = combined_nodupe.loc[combined_nodupe["time_to_trending"] >= pd.Timedelta(5, units = "years")]#
+    below_1_week_scaled = below_1_week_scaled.value_counts("category") / combined_nodupe.value_counts("category")
+    fig18 = px.bar(below_1_week_scaled)
+    st.plotly_chart(fig18)
+    
+    
+    # In[30]:
+    
+    
+    fig19 = px.box(combined_nodupe.loc[combined_nodupe["time_to_trending"] >= pd.Timedelta(1, units="week")], "category", "time_to_trending", 
+                 color="category", hover_name = "title", range_y = [0,50]) 
+    st.plotly_chart(fig19)
+    
+    # In[31]:
+    
+    
+    fig20 = px.box(combined_nodupe.loc[combined_nodupe["time_to_trending_hours"] < pd.Timedelta(168, units="hours")], "category", "time_to_trending", 
+                 color="category", hover_name = "title", range_y = [-1e-9,1e-9])
+    st.plotly_chart(fig20)
+    
+    
+    # In[32]:
+    
+    
+    fig21 = px.box(combined_nodupe, x="weekday", y="views", color = "weekday", 
+                 hover_name = "title", animation_frame = "category", log_y = True)
+    st.plotly_chart(fig21)
+    
+    
+    # In[33]:
+    
+    
+    st.markdown("Now lets see the spread of views but we group them by their categories and the corresponding weekday.")
+    
+    category_order = {
+        "Monday": "Monday",
+        "Tuesday": "Tuesday",
+        "Wednessday": "Wednesday",
+        "Thursday": "Thursday",
+        "Friday": "Friday",
+        "Saturday": "Saturday",
+        "Sunday": "Tuesday"
+    }
+    fig22 = px.box(combined_nodupe, category_orders = {"weekday": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]},
+                 x="category", y="views", color = "category", 
+                 hover_name = "title", animation_frame = "weekday", log_y = True)
+    st.plotly_chart(fig22)
+    
+    
+    # In[34]:
+    
+    
+    st.markdown("Now we will group by week days and weekends. letsa see the views difference")
+    grouped_by_week = combined_nodupe.groupby(["is_weekend", "country", "category"]).mean().reset_index()
+    fig23 = px.box(grouped_by_week, x="category", y="views", color = "is_weekend", 
+                 color_discrete_sequence=px.colors.qualitative.Alphabet)
+    st.plotly_chart(fig23)
+    
+    
+    # In[35]:
+    
+    
+    st.markdown("Evidently, the amount of views that are recieved on sundays are more than the ones that are received on weekdays. This is due to the fact")
+    st.markdown("That many people either have school or work on weekdays and will have less time for YouTube viewing. In conclusion, upload all your videos just before saturdays or sundays in order for better viewership!")
+    
+    #Now we will use likes as the y variable
+    grouped_by_week = combined_nodupe.groupby(["is_weekend", "country", "category"]).mean().reset_index()
+    fig24 = px.box(grouped_by_week, x="category", y="likes", color = "is_weekend", 
+                 color_discrete_sequence=px.colors.qualitative.Alphabet)
+    st.plotly_chart(fig24)
+    
+    
+    # In[36]:
+    
+    
+    st.markdown("Now we will use dislikes as the y variable")
+    grouped_by_week = combined_nodupe.groupby(["is_weekend", "country", "category", "time_of_day"]).mean().reset_index()
+    fig25 = px.box(grouped_by_week, x="category", y="dislikes", color = "is_weekend", 
+                 color_discrete_sequence=px.colors.qualitative.Alphabet)
+    st.plotly_chart(fig25)
+    
+    
+    # In[37]:
+    
+    
+    st.markdown("Lets find which time of day should you post which category!")
+    fig26 = px.box(grouped_by_week, x="time_of_day", y="views", color = "is_weekend", 
+                 color_discrete_sequence=px.colors.qualitative.Light24, animation_frame = "category"
+                    ,height = 1500, width = 900, log_y = True)
+    st.plotly_chart(fig26)
+    
+    
+    # In[38]:
+    
+    
+    st.markdown("Now lets do the same graph but as a bar chart")
+    fig27 = px.histogram(combined_nodupe, x="time_of_day", y="views", color = "is_weekend", 
+                 color_discrete_sequence=px.colors.qualitative.Light24, animation_frame = "category", barmode = "group", histfunc = "avg",
+                       category_orders = {"time_of_day": ["Morning", "Afternoon", "Evening", "Late night"]}, height = 800, width = 1000)
+    st.plotly_chart(fig27)
+    
+    
+    # In[39]:
+    
+    
+    st.markdown("Lets find which time of day should you post which category!  (with a histogram this time)")
+    
+    
+    
+    col1 = st.columns([4,5])
+    col1.subheader('Bar comparison of different times')
+    roption = col1.selectbox(
+     'Please select the value you wold like to explore',
+     ("views", "likes", "dislikes"))
+    
+    fig28 = px.histogram(combined_nodupe, y="hour_cat", x=roption, color = "is_weekend", animation_frame = "category"
+                    ,height = 900, width = 900, histfunc = "avg",
+                      category_orders = {"hour_cat": np.arange(24)},
+                      color_discrete_map={True:"lightgreen", False:"#FFA500"},
+                      facet_col="is_weekend")
+    fig28.update_layout(yaxis_title="average of views (in this hour)")
+    fig28.update_layout(xaxis_title="hour")
+    fig28.update_layout(title="Weekend vs Weekdays.")
+    fig28.update_traces(marker_line_color = "black", marker_line_width = 1.5)
+    fig28.update_layout(bargap = 0.5)
+    
+    st.plotly_chart(fig28)
+    
+    # In[48]:
+    
+    
+    st.markdown("In conclusion, it is best to post videos in the evening (around the hour 20 mark), both weekends and weekdays.")
+    st.markdown("However, sometimes, it is better to post during the morning for soame categories. Such as education!")
+    
+    st.markdown("Lets find which time of day will you get the most likes")
+    
+    fig29 = px.histogram(combined_nodupe, y="hour_cat", x="likes", color = "is_weekend", animation_frame = "category"
+                    ,height = 900, width = 900, histfunc = "avg",
+                      category_orders = {"hour_cat": np.arange(24)},
+                      color_discrete_map={True:"lightgreen", False:"#FFA500"},
+                      facet_col="is_weekend")
+    fig29.update_layout(yaxis_title="average of views (in this hour)")
+    fig29.update_layout(xaxis_title="hour")
+    fig29.update_layout(title="Weekend vs Weekdays.")
+    fig29.update_traces(marker_line_color = "black", marker_line_width = 1.5)
+    fig29.update_layout(bargap = 0.5)
+    #fig.update_yaxes(autorange="reversed")
+    #fig.update_xaxes(type='category')
+    st.plotly_chart(fig29)
+    
+    
+    # In[49]:
+    
+    
+    st.markdown("Lets find which time of day will you get the most dislikes")
+    
+    fig30 = px.histogram(combined_nodupe, y="hour_cat", x="dislikes", color = "is_weekend", animation_frame = "category"
+                    ,height = 900, width = 900, histfunc = "avg",
+                      category_orders = {"hour_cat": np.arange(24)},
+                      color_discrete_map={True:"lightgreen", False:"#FFA500"},
+                      facet_col="is_weekend")
+    fig30.update_layout(yaxis_title="average of views (in this hour)")
+    fig30.update_layout(xaxis_title="hour")
+    fig30.update_layout(title="Weekend vs Weekdays.")
+    fig30.update_traces(marker_line_color = "black", marker_line_width = 1.5)
+    fig30.update_layout(bargap = 0.5)
+    #fig.update_yaxes(autorange="reversed")
+    #fig.update_xaxes(type='category')
+    st.plotly_chart(fig30)
+    
+    
+    # # 4. Comparing successful to unsuccessful videos!
+    
+    
+    # In[42]:
+    
+    
+    #Here we can see the top 5% of videos and the bottom 5% of the videos
+    combined_nodupe["views"].describe(percentiles = [0.05,0.95])
+    
+    
+    # In[54]:
+    
+    
+    st.markdown("To make a graph and compare the two we will need to copy paste the values of 5% of 95% (boolean indexing). Very interesting indeed")
+    top_5_percent_viewed = combined_nodupe[combined_nodupe["views"] >= 1.012644e+06]
+    top_5_percent_viewed["top_or_bottom"] = True
+    bottom_5_percent_viewed = combined_nodupe[combined_nodupe["views"] <= 4.595900e+03]
+    bottom_5_percent_viewed["top_or_bottom"] = False
+    top_bottom_viewed = pd.concat([top_5_percent_viewed,bottom_5_percent_viewed]).copy()
+    
+    #Now we make a side by side facet graph!
+    fig31 = px.histogram(top_bottom_viewed, y="hour_cat", x="views", color = "top_or_bottom", animation_frame = "category"
+                    ,height = 900, width = 900, histfunc = "avg",
+                      category_orders = {"hour_cat": np.arange(24)},
+                      color_discrete_map={True:"lightgreen", False:"#FFA500"},
+                      facet_col="top_or_bottom")
+    fig31.update_layout(yaxis_title="average of views (in this hour)")
+    fig31.update_layout(xaxis_title="hour")
+    fig31.update_layout(title="top 5% vs the bottom 5%")
+    fig31.update_traces(marker_line_color = "black", marker_line_width = 1.5)
+    fig31.update_layout(bargap = 0.5)
+    #fig.update_yaxes(autorange="reversed")
+    #fig.update_xaxes(type='category')
+    
+    st.plotly_chart(fig31)
+    
+    
+    # In[55]:
+    
+    
+    st.markdown("Here we can see the top 5% of videos and the bottom 5% of the videos but this time we will look at the likes")
+    combined_nodupe["likes"].describe(percentiles = [0.05,0.95])
+    
+    
+    # In[57]:
+    
+    
+    top_5_percent_liked = combined_nodupe.loc[combined_nodupe["likes"] >= 4.676710e+04]
+    top_5_percent_liked["top_or_bottom"] = True
+    bottom_5_percent_liked = combined_nodupe.loc[combined_nodupe["likes"] <= 4.100000e+01]
+    bottom_5_percent_liked["top_or_bottom"] = False
+    top_bottom_liked = pd.concat([top_5_percent_liked,bottom_5_percent_liked]).copy()
+    
+    st.markdown("Now we make a side by side facet graph!")
+    fig32 = px.histogram(top_bottom_liked, y="hour_cat", x="likes", color = "top_or_bottom", animation_frame = "category"
+                    ,height = 900, width = 900, histfunc = "avg",
+                      category_orders = {"hour_cat": np.arange(24)},
+                      color_discrete_map={True:"lightgreen", False:"#FFA500"},
+                      facet_col="top_or_bottom")
+    fig32.update_layout(yaxis_title="average of likess (in this hour)")
+    fig32.update_layout(xaxis_title="hour")
+    fig32.update_layout(title="top 5% vs the bottom 5%")
+    fig32.update_traces(marker_line_color = "black", marker_line_width = 1.5)
+    fig32.update_layout(bargap = 0.5)
+    
+    st.plotly_chart(fig32)
+    #fig.update_yaxes(autorange="reversed")
+    #fig.update_xaxes(type='category')
