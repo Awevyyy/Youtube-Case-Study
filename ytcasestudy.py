@@ -330,8 +330,12 @@ if selected == "Data Exploration":
      'Please select the value you would like to group by',
      ("is_weekend","time_of_day","hour","weekday","category"))
     
+    
+    
     combined_corr = combined_nodupe.corr()
     fig8 = px.scatter(combined_nodupe, x=roption2, y=yoption2, color=groupoption2 ,hover_name = "title", height=600, width = 900 ,color_discrete_sequence = px.colors.qualitative.Light24, color_continuous_scale=px.colors.sequential.Viridis, opacity=0.5)
+    
+    fig8.update_layout()
     
     
     col2_2.plotly_chart(fig8)
@@ -636,6 +640,9 @@ if selected == "Data Analysis":
     grouped_by_week = combined_nodupe.groupby(["is_weekend", "country", "category"]).mean().reset_index()
     fig23 = px.box(grouped_by_week, x="category", y=roption6, color = "is_weekend", 
                  color_discrete_sequence=px.colors.qualitative.Alphabet)
+    
+    fig23.update_layout(yaxis_title = roption6.title())
+    fig23.update_layout(xaxis_title = "category".title())
     col2_6.plotly_chart(fig23)
     
     
@@ -656,6 +663,8 @@ if selected == "Data Analysis":
     fig26 = px.box(combined_nodupe, x="time_of_day", y=roption7, color = "is_weekend", 
                  color_discrete_sequence=px.colors.qualitative.Light24, animation_frame = "category"
                     ,height = 1500, width = 900, log_y = True)
+    
+    
     col2_7.plotly_chart(fig26)
     
     
