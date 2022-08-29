@@ -20,17 +20,17 @@ st.set_page_config(layout="wide")
 
 mypath = "C:/Users/r3ktmlg/Desktop/My Tech projekts/Youtube case study/Youtube-Case-Study/"
 
-USvids = pd.read_csv(mypath + "USvideos.csv")
-GBvids = pd.read_csv(mypath + "GBvideos.csv")
-RUvids = pd.read_csv(mypath + "RUvideos.csv", encoding = "utf-8")
+USvids = pd.read_csv("USvideos.csv")
+GBvids = pd.read_csv("GBvideos.csv")
+RUvids = pd.read_csv("RUvideos.csv", encoding = "utf-8")
 USvids["description"] = USvids["description"].fillna("No description")
-US_json = pd.read_json(mypath  + "US_category_id.json", orient = "records")
+US_json = pd.read_json("US_category_id.json", orient = "records")
 US_json_items = US_json["items"]
 USvids["trending_date"] = pd.to_datetime(USvids["trending_date"], format = "%y.%d.%m")
 USvids["publish_time"] = pd.to_datetime(USvids["publish_time"])
 USvids["like_dislike_ratio"] = (USvids["likes"]+1) / (USvids["dislikes"]+1)
 GBvids["description"] = GBvids["description"].fillna("No description")
-GB_json = pd.read_json(mypath + "GB_category_id.json", orient = "records")
+GB_json = pd.read_json("GB_category_id.json", orient = "records")
 GB_json_items = GB_json["items"]
 category_dic = {}
 def category_extractor(key): return (int(key["id"]),key["snippet"]["title"])
@@ -51,7 +51,7 @@ RUvids["publish_time"] = pd.to_datetime(RUvids["publish_time"])
 RUvids = RUvids.rename({"title": "russian_title"}, axis=1)
 RUvids.index.name = "id"
 RUvids.reset_index(inplace = True)
-RUvids = RUvids.merge(pd.read_csv(mypath + "RUvids_inEN.csv").rename({"Unnamed: 0": "id", "0": "title"}, axis=1), on="id")
+RUvids = RUvids.merge(pd.read_csv("RUvids_inEN.csv").rename({"Unnamed: 0": "id", "0": "title"}, axis=1), on="id")
 lot = []
 for rows in GB_json_items: lot.append(category_extractor(rows))
 dict_lot = dict(lot)
@@ -187,7 +187,7 @@ if selected == "Data Cleaning":
     
     st.markdown("Lets then use the json (a type of dictionary that matches categories to their respective IDs in this case) file provided by the author to make a category column based on the category_id column")
     
-    st.code("""US_json = pd.read_json(mypath  + "US_category_id.json", orient = "records")""")
+    st.code("""US_json = pd.read_json("US_category_id.json", orient = "records")""")
     
 
     st.markdown("Also, USvids.info() shows us that columns that are supposed to be in date time formart are not, but rather os objects (strings) so lets fix that")
@@ -225,7 +225,7 @@ if selected == "Data Cleaning":
     st.markdown("Now we get the the tricky part. The Russians do not use Latin characters so we couldnt just import it with the same encoding")
     st.markdown("We used an encoding called 'utf-8' so that it will work!")
     
-    st.code("""RUvids = pd.read_csv(mypath + "RUvideos.csv", encoding = "utf-8")""")
+    st.code("""RUvids = pd.read_csv("RUvideos.csv", encoding = "utf-8")""")
     
     st.markdown("We fix the trending date and publish time just like before")
     
