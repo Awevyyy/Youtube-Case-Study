@@ -342,7 +342,7 @@ if selected == "Data Exploration":
     grouped_by_category = combined_nodupe.groupby("category").mean().reset_index()
     
     col1_1,col2_1 = st.columns([1,5])
-    col1_1.subheader('Bar comparison of different times')
+    col1_1.subheader('Bar Comparison of Different Times')
     roption1 = col1_1.selectbox(
      'Please select the value you wold like to explore',
      ("views", "likes", "dislikes", "like_dislike_ratio"))
@@ -353,7 +353,7 @@ if selected == "Data Exploration":
     col2_1.plotly_chart(fig4)
     
     col1_4,col2_4 = st.columns([1,5])
-    col1_4.subheader('box plot compared to weekday')
+    col1_4.subheader('Box Plot of Weekdays')
     roption4 = col1_4.selectbox(
          'Please select the value you wold like to explore',
          ("views", "likes", "dislikes", "comment_count"))
@@ -377,7 +377,7 @@ if selected == "Data Exploration":
     }
     
     col1_5,col2_5 = st.columns([1,5])
-    col1_5.subheader('box plot simulator (with custom y variables!)')
+    col1_5.subheader('Box Plot Simulator (Custom "y" Variables)')
     roption5 = col1_5.selectbox(
      'Please select the value you wold like to explore',
      ("views", "likes", "dislikes", "comment_count"), key = "5ru08wefj0isdfghjwe90gh3490tyh890h")
@@ -390,7 +390,7 @@ if selected == "Data Exploration":
     st.markdown("Lets find which time of day should you post which category!  (with a histogram this time)")
     st.header(' ')
     col1,col2 = st.columns([1,5])
-    col1.subheader('Bar comparison of different times')
+    col1.subheader('Bar Comparison of the 24 Hours')
     roption = col1.selectbox(
      'Please select the value you wold like to explore',
      ("views", "likes", "dislikes"))
@@ -626,7 +626,7 @@ if selected == "Data Analysis":
     # In[34]:
         
     col1_6,col2_6 = st.columns([1,5])
-    col1_6.subheader('Scatter correlation simulator')
+    col1_6.subheader('Scatter Correlation Simulator')
     roption6 = col1_6.selectbox(
          'Please select the value you wold like to explore',
          ("views", "likes", "dislikes", "comment_count"), key = "df0isdnhiokenriogenriogfneriogn")
@@ -647,7 +647,7 @@ if selected == "Data Analysis":
     
     # In[37]:
     col1_7,col2_7 = st.columns([1,5])
-    col1_7.subheader('Scatter correlation simulator')
+    col1_7.subheader('Scatter Correlation Simulator')
     roption7 = col1_7.selectbox(
          'Please select the value you wold like to explore',
          ("views", "likes", "dislikes", "comment_counts"))
