@@ -317,7 +317,7 @@ if selected == "Data Exploration":
     st.markdown("scatter plots are great for exploring the correlation between different values so first we need to find the correlation between different values")
     
     col1_2,col2_2 = st.columns([1,5])
-    col1_2.subheader('Scatter correlation simulator')
+    col1_2.subheader('Scatter Correlation Simulator')
     roption2 = col1_2.selectbox(
      'Please select the value you would like to explore (x-axis)',
      ("views", "likes", "dislikes", "comment_count","views_likes_ratio"))
@@ -335,8 +335,7 @@ if selected == "Data Exploration":
     combined_corr = combined_nodupe.corr()
     fig8 = px.scatter(combined_nodupe, x=roption2, y=yoption2, color=groupoption2 ,hover_name = "title", height=600, width = 900 ,color_discrete_sequence = px.colors.qualitative.Light24, color_continuous_scale=px.colors.sequential.Viridis, opacity=0.5)
     
-    fig8.update_layout()
-    
+    fig8.update_layout(xaxis_title = roption2.title(), yaxis_title = yoption2.title())
     
     col2_2.plotly_chart(fig8)
     
@@ -354,6 +353,8 @@ if selected == "Data Exploration":
     fig4 = px.bar(grouped_by_category, x="category", y=roption1, height=600, width = 900
                 ,color = "views",color_continuous_scale=px.colors.sequential.Viridis)
     
+    fig4.update_layout(xaxis_title = "Category", yaxis_title = roption1.title())
+    
     col2_1.plotly_chart(fig4)
     
     col1_4,col2_4 = st.columns([1,5])
@@ -366,6 +367,8 @@ if selected == "Data Exploration":
     fig21 = px.box(combined_nodupe, x="weekday", y=roption4, color = "weekday", 
                  hover_name = "title", animation_frame = "category", log_y = True)
     col2_4.plotly_chart(fig21)
+    
+    fig21.update_layout(xaxis_title = "Weekday", yaxis_title = roption4.title())
     
     
     st.markdown("Now lets see the spread of views but we group them by their categories and the corresponding weekday.")
@@ -459,6 +462,9 @@ if selected == "Data Analysis":
     
     fig3.update_traces(customdata=grouped_by_category_country["viewsum"][grouped_by_category_country["country"] == "GB"], hovertemplate = "Category: %{x} <br> Mean Views: %{customdata}",
                      selector = dict(type="histogram",offsetgroup = "GB"))
+    
+    fig3.update_layout(xaxis_title = "Category", yaxis_title = "views")
+    fig3.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     st.plotly_chart(fig3)
                       
     
@@ -493,6 +499,7 @@ if selected == "Data Analysis":
     
     fig6 = px.bar(grouped_by_category, x="category", y='value', height=600, width = 900
                 ,color_continuous_scale=px.colors.sequential.Viridis, color="value")
+    fig6.update_layout(xaxis_title = "Category", yaxis_title = "Combined/Derived Value")
     st.plotly_chart(fig6)
     
     # In[18]:
@@ -505,7 +512,7 @@ if selected == "Data Analysis":
     
     fig7 = px.bar(grouped_by_category_no_music, x="category", y='value', height=600, width = 900
                 ,color_continuous_scale=px.colors.sequential.Viridis,color = "value")
-    
+    fig7.update_layout(xaxis_title = "Category", yaxis_title = "Combined/Derived Value")
     #Much more even!
     
     
@@ -542,33 +549,37 @@ if selected == "Data Analysis":
     st.markdown("WOW! April 14 2018 was a big day for youtube! lets break it down with some categories")
     grouped_by_date = combined_nodupe.groupby(["trending_date","category"]).mean().reset_index()
     fig11 = px.line(grouped_by_date, "trending_date", roption3, height=600, width = 900, color="category")
+    fig11.update_layout(xaxis_title = "Trending Date", yaxis_title = roption3.title())
     st.plotly_chart(fig11)
     
     
     # In[24]:
     
     
-    st.markdown("Lets explore the time taken for videos to trend")
+    st.markdown("Lets explore the time taken for videos to trend! This should give us some information")
     fig13 = px.histogram(combined_nodupe, x="time_to_trending", height=600, width = 900
                 ,color_discrete_sequence=px.colors.qualitative.Dark24)
+    fig13.update_layout(xaxis_title = "Time to Trending")
     st.plotly_chart(fig13)
     
     
     # In[25]:
     
     
-    st.markdown("Lets explore the time taken for videos to trend within a week")
+    st.markdown("Lets explore the time taken for videos to trend which happens to be within a week")
     fig14 = px.histogram(combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(7, units = "days")], x="time_to_trending", height=600, width = 900
                 ,color_discrete_sequence=px.colors.qualitative.Light24, color = "category", barmode = "group")
+    fig14.update_layout(xaxis_title = "Time to Trending")
     st.plotly_chart(fig14)
     
     
     # In[26]:
     
     
-    st.markdown("Lets cell, we explored the distribution regarding how fast the videos trend. So yeah, there are more blogs and entertainment than most of the others combined.")
+    st.markdown("Last cell, we explored the distribution regarding how fast the videos trend. So yeah, there are more blogs and entertainment than most of the others combined.")
     under_7_days = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(7, units = "days")]
     fig15 = px.bar(under_7_days.value_counts("category"))
+    fig15.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.plotly_chart(fig15)
     
     
@@ -578,6 +589,7 @@ if selected == "Data Analysis":
     st.markdown("Lets now take a look at those videos which take a lot longer to trend. Namely the ones that take over 2 years to resurface on your recommended")
     over_2_years = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(2, units = "years")]
     fig16 = px.bar(over_2_years.value_counts("category"))
+    fig16.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.plotly_chart(fig16)
     
     
@@ -598,6 +610,7 @@ if selected == "Data Analysis":
     below_1_week_scaled = combined_nodupe.loc[combined_nodupe["time_to_trending"] >= pd.Timedelta(5, units = "years")]#
     below_1_week_scaled = below_1_week_scaled.value_counts("category") / combined_nodupe.value_counts("category")
     fig18 = px.bar(below_1_week_scaled)
+    fig18.update_layout(xaxis_title = "Category")
     st.plotly_chart(fig18)
     
     
@@ -606,13 +619,15 @@ if selected == "Data Analysis":
     
     fig19 = px.box(combined_nodupe.loc[combined_nodupe["time_to_trending"] >= pd.Timedelta(1, units="week")], "category", "time_to_trending", 
                  color="category", hover_name = "title", range_y = [0,50]) 
+    fig19.update_layout(xaxis_title = "Category", yaxis_title ="Time to Trending")
     st.plotly_chart(fig19)
     
     # In[31]:
     
-    
+
     fig20 = px.box(combined_nodupe.loc[combined_nodupe["time_to_trending_hours"] < pd.Timedelta(168, units="hours")], "category", "time_to_trending", 
                  color="category", hover_name = "title", range_y = [-1e-9,1e-9])
+    fig20.update_layout(xaxis_title = "Category", yaxis_title = "Time to Trending")
     st.plotly_chart(fig20)
     
     
@@ -664,7 +679,7 @@ if selected == "Data Analysis":
                  color_discrete_sequence=px.colors.qualitative.Light24, animation_frame = "category"
                     ,height = 1500, width = 900, log_y = True)
     
-    
+    fig26.update_layout(xaxis_title = "Time of Day", yaxis_title = roption7.title())
     col2_7.plotly_chart(fig26)
     
     
