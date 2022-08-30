@@ -314,7 +314,10 @@ if selected == "Data Cleaning":
 if selected == "Data Exploration":
     st.markdown("# Data Exploration")
     
-    st.markdown("scatter plots are great for exploring the correlation between different values so first we need to find the correlation between different values")
+    st.markdown("scatter plots are great for exploring the correlation between different variables so first we need to choose between 2 different numeric variables to determine their relationship. Additionally, we can choose a categorical variable to further explore the grouped points belonging to the same category! (through the same colour)")
+    
+    
+    st.markdown("Please allocate some time in order to play around with this plot.")
     
     col1_2,col2_2 = st.columns([1,5])
     col1_2.subheader('Scatter Correlation Simulator')
