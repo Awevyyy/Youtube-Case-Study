@@ -391,7 +391,7 @@ if selected == "Data Exploration":
     
     fig22 = px.box(combined_nodupe, category_orders = {"weekday": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]},
                  x="category", y=roption5, color = "category", 
-                 hover_name = "title", animation_frame = "weekday", log_y = True)
+                 hover_name = "title", animation_frame = "weekday", log_y = True, width = 800, height = 800)
     col2_5.plotly_chart(fig22)
     
     st.markdown("Lets find which time of day should you post which category!  (with a histogram this time)")
