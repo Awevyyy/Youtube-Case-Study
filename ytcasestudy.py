@@ -333,7 +333,7 @@ if selected == "Data Exploration":
     
     
     combined_corr = combined_nodupe.corr()
-    fig8 = px.scatter(combined_nodupe, x=roption2, y=yoption2, color=groupoption2 ,hover_name = "title", height=600, width = 900 ,color_discrete_sequence = px.colors.qualitative.Light24, color_continuous_scale=px.colors.sequential.Viridis, opacity=0.5)
+    fig8 = px.scatter(combined_nodupe, x=roption2, y=yoption2, color=groupoption2 ,hover_name = "title", height=600, width = 900 ,color_discrete_sequence = px.colors.qualitative.Light24, color_continuous_scale=px.colors.sequential.Viridis, opacity=0.5, labels={"views": "Views", "is_weekend": "Weekend", "likes": "Likes", "dislikes": "Dislikes", "comment_count": "Number of Comments"})
     
     fig8.update_layout(xaxis_title = roption2.title(), yaxis_title = yoption2.title())
     
