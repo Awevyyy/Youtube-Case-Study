@@ -575,7 +575,6 @@ if selected == "Data Analysis":
     fig14.update_layout(xaxis_title = "Time to Trending")
     st.plotly_chart(fig14)
     
-    st.markdown("")
     st.markdown("From this graph we can see that the People and Blogs category trends that fastest out of all the other categories. This means that if you want to be trending fast, I would suggest posting more / focusing more on that category.")
     
     # In[26]:
@@ -603,7 +602,7 @@ if selected == "Data Analysis":
     
     st.markdown("Finally, lets take a look at the ones that take average time to trend. Above a week and below a month")
     below_1_month = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(1, units = "months")]
-    fig17 = px.bar(below_1_month.value_counts("category"))
+    fig17 = px.bar(below_1_month.value_counts("category"),axis=1)
     st.plotly_chart(fig17)
     
     
