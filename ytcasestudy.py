@@ -425,8 +425,6 @@ if selected == "Data Exploration":
 if selected == "Data Analysis":
     st.markdown("# Exploring data with plotly express")
     
-    st.markdown("### Making a bar graph")
-    
 
     
     # In[12]:
@@ -437,6 +435,7 @@ if selected == "Data Analysis":
     fig1 = px.bar(category_counts, x='category', y='counts', hover_data=["counts"], color='counts', height=600, width = 900
                 ,color_continuous_scale=px.colors.sequential.Viridis)
     
+    st.subheader("Bar graph - Amount of entries in each category")
     st.plotly_chart(fig1)
     st.markdown("From this graph we can tell that there are a lot of competition surrounding the People and Blogs category! We should avoid it since we want to avoid competition if you are a small content creator.")
     
@@ -446,9 +445,12 @@ if selected == "Data Analysis":
     
     st.markdown("Now lets calculate the average amounts of views the different categories get by using df.groupby")
     grouped_by_category = combined_nodupe.groupby("category").mean()
-    fig2 = px.bar(grouped_by_category, x=grouped_by_category.index, y='views', color='views', height=600, width = 900
+    fig2 = px.bar(grouped_by_category.sort_values("views"), x=grouped_by_category.index, y='views', color='views', height=600, width = 900
                 ,color_continuous_scale=px.colors.sequential.Viridis)
+    
+    st.subheader("Bar graph - Average views each category gets.")
     st.plotly_chart(fig2)
+    
     
     st.markdown("From this graph we know that the music video category gives the most views on average. This has to mean that music is the best category right? Well, not really, because there is a lot of professional music producers that steals all of the views in the music category think of supply and demand, although there is a lot of demand for the music category, the bigger creators capitalise on that and then when they provide the supply (the video), the algorithm helps that creator get all of the views and then your video doesn't get any recommendations which results in little to no views. It is unwise to do the music category due to the high amount of skill required.")
     
@@ -457,7 +459,7 @@ if selected == "Data Analysis":
     
     grouped_by_category_country = combined_nodupe.groupby(["category", "country"]).mean().reset_index(drop=False)
     grouped_by_category_country["viewsum"] = grouped_by_category_country["views"]
-    fig3 = px.histogram(grouped_by_category_country, x="category", y='views', color='country', height=600, width = 900
+    fig3 = px.histogram(grouped_by_category_country.sort_values("views"), x="category", y='views', color='country', height=600, width = 900
                 ,color_discrete_sequence=px.colors.qualitative.Dark24, barmode = "group", barnorm = "percent", hover_name = "viewsum")
     
     fig3.update_traces(customdata=grouped_by_category_country["viewsum"][grouped_by_category_country["country"] == "US"], hovertemplate = "Category: %{x} <br> Mean Views: %{customdata}",
@@ -471,6 +473,8 @@ if selected == "Data Analysis":
     
     fig3.update_layout(xaxis_title = "Category", yaxis_title = "views")
     fig3.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
+    
+    st.subheader("Bar chart - Different categories across RU,GB,US")
     st.plotly_chart(fig3)
                       
     
@@ -506,6 +510,8 @@ if selected == "Data Analysis":
     fig6 = px.bar(grouped_by_category, x="category", y='value', height=600, width = 900
                 ,color_continuous_scale=px.colors.sequential.Viridis, color="value")
     fig6.update_layout(xaxis_title = "Category", yaxis_title = "Combined/Derived Value")
+    
+    st.subheader("Bar chart - Ultimate formula/Derived Total Value")
     st.plotly_chart(fig6)
     
         
@@ -521,6 +527,7 @@ if selected == "Data Analysis":
                 ,color_continuous_scale=px.colors.sequential.Viridis,color = "value")
     fig7.update_layout(xaxis_title = "Category", yaxis_title = "Combined/Derived Value")
     #Much more even!
+    st.subheader("Bar chart - Ultimate formula/Derived Total Value (no music)")
     st.plotly_chart(fig7)
     
     st.markdown("Ok, so now the distribution is much more even. The top scoreres includes Comedy, Entertainment, Gaming and science and technology! This means that you should definately consider choosing the categories listed above if you are going for overall good reception")
@@ -534,14 +541,12 @@ if selected == "Data Analysis":
     df = combined_nodupe
     fig9 = px.pie(df, values='views', names='category', title='Views')
     
-    # 
-    
-    st.markdown("### Making a PIE chart!")
+    #
+    st.subheader("Pie chart - Sum of views of YouTube")
     st.plotly_chart(fig9)
     
     
     col1_3,col2_3 = st.columns([1,5])
-    col1_3.subheader('Very interactive line graph')
     roption3 = col1_3.selectbox(
      'Please select the value you wold like to explore',
      ("views", "likes", "dislikes", "comment_count"))
@@ -549,7 +554,8 @@ if selected == "Data Analysis":
     
     grouped_by_date = combined_nodupe.groupby(["trending_date","category"]).mean().reset_index()
     fig11 = px.line(grouped_by_date, "trending_date", roption3, height=600, width = 900, color="category",color_discrete_sequence = px.colors.qualitative.Light24)
-    fig11.update_layout(xaxis_title = "Trending Date", yaxis_title = roption3.title())
+    fig11.update_layout(xaxis_title = "Trending Date", yaxis_title = roption3.title())    
+    st.subheader("Line plot - Videos' Time to Trending split in categories")
     st.plotly_chart(fig11)
     st.markdown("This line plot does not really have an upwards trend nor a downwards trend. However, there are many spikes in numberas that indicate a super viral video trending on that specific date.")
     st.markdown("We can also see that most of the spikes are from the music category, unsurprisingly. ")
@@ -557,11 +563,12 @@ if selected == "Data Analysis":
     
     # In[24]:
     
-    
+    st.subheader("Bar chart - Time to Trending bars")
     st.markdown("Lets explore the time taken for videos to trend! This should give us some information")
     fig13 = px.histogram(combined_nodupe, x="time_to_trending", height=600, width = 900
-                ,color_discrete_sequence=px.colors.qualitative.Dark24, range_x = [0,10])
+                ,color_discrete_sequence=px.colors.qualitative.Dark24, range_x = [0,10], nbins=1)
     fig13.update_layout(xaxis_title = "Time to Trending")
+
     st.plotly_chart(fig13)
     
     
@@ -573,6 +580,7 @@ if selected == "Data Analysis":
     fig14 = px.histogram(combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(7, units = "days")], x="time_to_trending", height=600, width = 900
                 ,color_discrete_sequence=px.colors.qualitative.Light24, color = "category", barmode = "group")
     fig14.update_layout(xaxis_title = "Time to Trending")
+    st.subheader("Bar chart - Time to Trending split into categories")
     st.plotly_chart(fig14)
     
     st.markdown("From this graph we can see that the People and Blogs category trends that fastest out of all the other categories. This means that if you want to be trending fast, I would suggest posting more / focusing more on that category.")
@@ -582,8 +590,9 @@ if selected == "Data Analysis":
     
     st.markdown("Last cell, we explored the distribution regarding how fast the videos trend. So yeah, there are more blogs and entertainment than most of the others combined.")
     under_7_days = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(7, units = "days")]
-    fig15 = px.bar(under_7_days["category"].value_counts().reset_index())
+    fig15 = px.bar(under_7_days.value_counts("category"))
     fig15.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
+    st.subheader("Bar chart - Amount of videos that trend within a week (by category)")
     st.plotly_chart(fig15)
     
     
@@ -603,7 +612,8 @@ if selected == "Data Analysis":
     
     st.markdown("Finally, lets take a look at the ones that take average time to trend. Above a week and below a month")
     below_1_month = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(1, units = "months")]
-    fig17 = px.bar(below_1_month.value_counts("category"),axis=1)
+    fig17 = px.bar(below_1_month.value_counts("category"))
+    st.subheader("Bar chart - Average trending time below a month (by category)")
     st.plotly_chart(fig17)
     
     
@@ -613,19 +623,12 @@ if selected == "Data Analysis":
     fig19 = px.box(combined_nodupe.loc[combined_nodupe["time_to_trending"] >= pd.Timedelta(1, units="week")], "category", "time_to_trending", 
                  color="category", hover_name = "title", range_y = [0,50]) 
     fig19.update_layout(xaxis_title = "Category", yaxis_title ="Time to Trending")
+    st.subheader("Box Plot - Time to Trending above one week visualised")
     st.plotly_chart(fig19)
-    
-    # In[31]:
-    
-
-    fig20 = px.box(combined_nodupe.loc[combined_nodupe["time_to_trending_hours"] < pd.Timedelta(168, units="hours")], "category", "time_to_trending", 
-                 color="category", hover_name = "title", range_y = [-1e-9,1e-9])
-    fig20.update_layout(xaxis_title = "Category", yaxis_title = "Time to Trending")
-    st.plotly_chart(fig20)
     
         
     col1_6,col2_6 = st.columns([1,5])
-    col1_6.subheader('Scatter Correlation Simulator')
+    col1_6.subheader('Box plot simulator')
     roption6 = col1_6.selectbox(
          'Please select the value you wold like to explore',
          ("views", "likes", "dislikes", "comment_count"), key = "df0isdnhiokenriogenriogfneriogn")
@@ -649,7 +652,7 @@ if selected == "Data Analysis":
     
     # In[37]:
     col1_7,col2_7 = st.columns([1,5])
-    col1_7.subheader('Scatter Correlation Simulator')
+    col1_7.subheader('Another box plot simulator (time of day)')
     roption7 = col1_7.selectbox(
          'Please select the value you wold like to explore',
          ("views", "likes", "dislikes", "comment_counts"))
@@ -692,7 +695,7 @@ if selected == "Data Analysis":
     
     fig282.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     #fig28.for_each_trace(lambda t: t.update(name=t.name.split("=")[1]))
-    
+    st.subheader("Histogram - Views on specific times of days")
     st.plotly_chart(fig282)
     
     # In[48]:
@@ -715,6 +718,7 @@ if selected == "Data Analysis":
     fig29.update_layout(bargap = 0.5)
     #fig.update_yaxes(autorange="reversed")
     #fig.update_xaxes(type='category')
+    st.subheader("Bar chart - Weekend vs Weekdays likes count")
     st.plotly_chart(fig29)
     
     
@@ -735,6 +739,7 @@ if selected == "Data Analysis":
     fig30.update_layout(bargap = 0.5)
     #fig.update_yaxes(autorange="reversed")
     #fig.update_xaxes(type='category')
+    st.subheader("Bar chart - Weekend vs Weekdays dislikes count")
     st.plotly_chart(fig30)
     
     st.markdown("From these 2 graphs of similar fashion above, we can conclude that the videos you post during the weekdays will be the most popular at 6am or 22am US time.")
