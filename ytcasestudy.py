@@ -537,12 +537,12 @@ if selected == "Data Analysis":
     
     # 
     
-    st.markdown("### Making line plots!")
+    st.markdown("### Making a PIE chart!")
     st.plotly_chart(fig9)
     
     
     col1_3,col2_3 = st.columns([1,5])
-    col1_3.subheader('Bar comparison of different times')
+    col1_3.subheader('Very interactive line graph')
     roption3 = col1_3.selectbox(
      'Please select the value you wold like to explore',
      ("views", "likes", "dislikes", "comment_count"))
@@ -552,8 +552,8 @@ if selected == "Data Analysis":
     fig11 = px.line(grouped_by_date, "trending_date", roption3, height=600, width = 900, color="category")
     fig11.update_layout(xaxis_title = "Trending Date", yaxis_title = roption3.title())
     st.plotly_chart(fig11)
-    
-    st.markdown("We can see that there are many spikes from the music category, unsurprisingly. Once we zoom into the")
+    st.markdown("This line plot does not really have an upwards trend nor a downwards trend. However, there are many spikes in numberas that indicate a super viral video trending on that specific date.")
+    st.markdown("We can also see that most of the spikes are from the music category, unsurprisingly. ")
     st.markdown("Nevertheless, We can see that April 14 2018 was a big day on YouTube, many people clicking on videos. Lets explore it further!")
     
     # In[24]:
@@ -561,9 +561,10 @@ if selected == "Data Analysis":
     
     st.markdown("Lets explore the time taken for videos to trend! This should give us some information")
     fig13 = px.histogram(combined_nodupe, x="time_to_trending", height=600, width = 900
-                ,color_discrete_sequence=px.colors.qualitative.Dark24)
+                ,color_discrete_sequence=px.colors.qualitative.Dark24, x_range = [0,10])
     fig13.update_layout(xaxis_title = "Time to Trending")
     st.plotly_chart(fig13)
+    
     
     
     # In[25]:
@@ -575,6 +576,8 @@ if selected == "Data Analysis":
     fig14.update_layout(xaxis_title = "Time to Trending")
     st.plotly_chart(fig14)
     
+    st.markdown("")
+    st.markdown("From this graph we can see that the People and Blogs category trends that fastest out of all the other categories. This means that if you want to be trending fast, I would suggest posting more / focusing more on that category.")
     
     # In[26]:
     
@@ -605,18 +608,6 @@ if selected == "Data Analysis":
     st.plotly_chart(fig17)
     
     
-    # In[29]:
-    
-    
-    st.markdown("This doesnt really tell us much because there are different amounts of total videos... sad indeed")
-    
-    below_1_week_scaled = combined_nodupe.loc[combined_nodupe["time_to_trending"] >= pd.Timedelta(5, units = "years")]#
-    below_1_week_scaled = below_1_week_scaled.value_counts("category") / combined_nodupe.value_counts("category")
-    fig18 = px.bar(below_1_week_scaled)
-    fig18.update_layout(xaxis_title = "Category")
-    st.plotly_chart(fig18)
-    
-    
     # In[30]:
     
     
@@ -633,19 +624,6 @@ if selected == "Data Analysis":
     fig20.update_layout(xaxis_title = "Category", yaxis_title = "Time to Trending")
     st.plotly_chart(fig20)
     
-    
-    # In[32]:
-        
-
-    
-    
-    # In[33]:
-    
-    
-
-    
-    
-    # In[34]:
         
     col1_6,col2_6 = st.columns([1,5])
     col1_6.subheader('Scatter Correlation Simulator')
@@ -759,6 +737,8 @@ if selected == "Data Analysis":
     #fig.update_yaxes(autorange="reversed")
     #fig.update_xaxes(type='category')
     st.plotly_chart(fig30)
+    
+    st.markdown("From these 2 graphs of similar fashion above, we can conclude that the videos you post during the weekdays will be the most popular at 6am or 22am US time.")
     
 
 if selected == "Conclusion":
