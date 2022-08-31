@@ -589,12 +589,13 @@ if selected == "Data Analysis":
     
     # In[27]:
     
-    
+    """
     st.markdown("Lets now take a look at those videos which take a lot longer to trend. Namely the ones that take over 2 years to resurface on your recommended")
     over_2_years = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(2, units = "years")]
     fig16 = px.bar(over_2_years["category"].value_counts())
     fig16.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.plotly_chart(fig16)
+   """
     
     
     # In[28]:
