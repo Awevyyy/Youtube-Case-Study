@@ -561,7 +561,7 @@ if selected == "Data Analysis":
     
     st.markdown("Lets explore the time taken for videos to trend! This should give us some information")
     fig13 = px.histogram(combined_nodupe, x="time_to_trending", height=600, width = 900
-                ,color_discrete_sequence=px.colors.qualitative.Dark24, x_range = [0,10])
+                ,color_discrete_sequence=px.colors.qualitative.Dark24, range_x = [0,10])
     fig13.update_layout(xaxis_title = "Time to Trending")
     st.plotly_chart(fig13)
     
