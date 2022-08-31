@@ -549,7 +549,7 @@ if selected == "Data Analysis":
     
     grouped_by_date = combined_nodupe.groupby(["trending_date","category"]).mean().reset_index()
     fig11 = px.line(grouped_by_date, "trending_date", roption3, height=600, width = 900, color="category")
-    fig11.update_layout(xaxis_title = "Trending Date", yaxis_title = roption3.title(), color_continuous_scale = px.colors.qualitative.Light24)
+    fig11.update_layout(xaxis_title = "Trending Date", yaxis_title = roption3.title(), color_discrete_sequence = px.colors.qualitative.Light24)
     st.plotly_chart(fig11)
     st.markdown("This line plot does not really have an upwards trend nor a downwards trend. However, there are many spikes in numberas that indicate a super viral video trending on that specific date.")
     st.markdown("We can also see that most of the spikes are from the music category, unsurprisingly. ")
