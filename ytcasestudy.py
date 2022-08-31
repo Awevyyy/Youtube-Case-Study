@@ -583,7 +583,7 @@ if selected == "Data Analysis":
     
     st.markdown("Last cell, we explored the distribution regarding how fast the videos trend. So yeah, there are more blogs and entertainment than most of the others combined.")
     under_7_days = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(7, units = "days")]
-    fig15 = px.bar(under_7_days["category"].value_counts().reset_index().rename({'index':'Category',"category": "Counts"},axis=1)
+    fig15 = px.bar(under_7_days["category"].value_counts().reset_index(),axis=1)
 )
     fig15.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.plotly_chart(fig15)
@@ -594,7 +594,7 @@ if selected == "Data Analysis":
     
     st.markdown("Lets now take a look at those videos which take a lot longer to trend. Namely the ones that take over 2 years to resurface on your recommended")
     over_2_years = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(2, units = "years")]
-    fig16 = px.bar(over_2_years["category"].value_counts().rename({'index':'Category',"category": "Counts"},axis=1))
+    fig16 = px.bar(over_2_years["category"].value_counts())
     fig16.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.plotly_chart(fig16)
     
@@ -604,7 +604,7 @@ if selected == "Data Analysis":
     
     st.markdown("Finally, lets take a look at the ones that take average time to trend. Above a week and below a month")
     below_1_month = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(1, units = "months")]
-    fig17 = px.bar(below_1_month.value_counts("category").rename({'index':'Category',"category": "Counts"},axis=1)
+    fig17 = px.bar(below_1_month.value_counts("category"),axis=1)
 )
     st.plotly_chart(fig17)
     
