@@ -438,6 +438,7 @@ if selected == "Data Analysis":
                 ,color_continuous_scale=px.colors.sequential.Viridis)
     
     st.plotly_chart(fig1)
+    st.markdown("From this graph we can tell that there are a lot of competition surrounding the People and Blogs category! We should avoid it since we want avoid competition if you are a small content creator.")
     
     
     # In[13]:
@@ -448,6 +449,8 @@ if selected == "Data Analysis":
     fig2 = px.bar(grouped_by_category, x=grouped_by_category.index, y='views', color='views', height=600, width = 900
                 ,color_continuous_scale=px.colors.sequential.Viridis)
     st.plotly_chart(fig2)
+    
+    st.markdown("From this graph we know that the music video category gives the most views on average. This has to mean that music is the best category right? Well, not really, because there is a lot of professional music producers that steals all of the views in the music category. It is unwise to do the music category due to the high amount of skill required.")
     
     # In[14]:
     
@@ -483,8 +486,8 @@ if selected == "Data Analysis":
     # In[16]:
     
     
-    st.markdown("As we can see from above, The highest like to dislike ratio category is the Pets and Animals category. This means that people love pets and if you show your pets on camera they will like and subscribe.")
-    st.markdown("Closely behind is Music, which has high production costs thus is not a good choice for people not investing loads")
+    st.markdown("As we can see from above, The highest like to dislike ratio category is the Pets and Animals category. This means that people love pets and if you show your pets on camera they will like and subscribe. Thus if you have a cute or even exotic pet you can just show them on a camera and make some edits and you will receive many views!")
+    st.markdown("Closely behind is Music, which has high production costs thus is not a good choice for people not investing loads.")
     
     st.markdown("Now lets take a look at the average amount of dislikes, to conclude which one you as a creator should not be creating content on")
     
@@ -505,10 +508,11 @@ if selected == "Data Analysis":
     fig6.update_layout(xaxis_title = "Category", yaxis_title = "Combined/Derived Value")
     st.plotly_chart(fig6)
     
+        
+    st.markdown("Wow! From this graph we can see that music beats everything else in terms of the best overall / derived value! That is absolutely insane! However, music is very good but to make a Music video but the production cost is way too high! So lets drop it from our next graph to explore the rest, another option of you do not have that much production power")
+    
     # In[18]:
     
-    
-    st.markdown("Ok, yeah, its very good to make a Music video but the production cost is way too high! So lets drop it")
     grouped_by_category_no_music = grouped_by_category.drop(8).reset_index()
     
     st.markdown("Ok great, lets test it out with the same bar chart then")
@@ -517,21 +521,15 @@ if selected == "Data Analysis":
                 ,color_continuous_scale=px.colors.sequential.Viridis,color = "value")
     fig7.update_layout(xaxis_title = "Category", yaxis_title = "Combined/Derived Value")
     #Much more even!
-    
-    
-    st.markdown("### making a scatter plot")
     st.plotly_chart(fig7)
     
-    # In[19]:
+    st.markdown("Ok, so now the distribution is much more even. The top scoreres includes Comedy, Entertainment, Gaming and science and technology! This means that you should definately consider choosing the categories listed above if you are going for overall good recession")
     
-    
-    
-    st.markdown("### Making a pie chart")
     
     # In[20]:
     
     
-    st.markdown("Now lets explroe the distribution of the views between the different category id's with the power of a pie chart")
+    st.markdown("Now lets explore the distribution of the views between the different category id's with the power of a pie chart")
     
     df = combined_nodupe
     df.loc[df['views'] < 2000000, 'category_id'] = 'Other categories'
@@ -549,12 +547,14 @@ if selected == "Data Analysis":
      'Please select the value you wold like to explore',
      ("views", "likes", "dislikes", "comment_count"))
     
-    st.markdown("WOW! April 14 2018 was a big day for youtube! lets break it down with some categories")
+    
     grouped_by_date = combined_nodupe.groupby(["trending_date","category"]).mean().reset_index()
     fig11 = px.line(grouped_by_date, "trending_date", roption3, height=600, width = 900, color="category")
     fig11.update_layout(xaxis_title = "Trending Date", yaxis_title = roption3.title())
     st.plotly_chart(fig11)
     
+    st.markdown("We can see that there are many spikes from the music category, unsurprisingly. Once we zoom into the")
+    st.markdown("Nevertheless, We can see that April 14 2018 was a big day on YouTube, many people clicking on videos. Lets explore it further!")
     
     # In[24]:
     
