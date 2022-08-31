@@ -438,7 +438,7 @@ if selected == "Data Analysis":
                 ,color_continuous_scale=px.colors.sequential.Viridis)
     
     st.plotly_chart(fig1)
-    st.markdown("From this graph we can tell that there are a lot of competition surrounding the People and Blogs category! We should avoid it since we want avoid competition if you are a small content creator.")
+    st.markdown("From this graph we can tell that there are a lot of competition surrounding the People and Blogs category! We should avoid it since we want to avoid competition if you are a small content creator.")
     
     
     # In[13]:
@@ -450,7 +450,7 @@ if selected == "Data Analysis":
                 ,color_continuous_scale=px.colors.sequential.Viridis)
     st.plotly_chart(fig2)
     
-    st.markdown("From this graph we know that the music video category gives the most views on average. This has to mean that music is the best category right? Well, not really, because there is a lot of professional music producers that steals all of the views in the music category. It is unwise to do the music category due to the high amount of skill required.")
+    st.markdown("From this graph we know that the music video category gives the most views on average. This has to mean that music is the best category right? Well, not really, because there is a lot of professional music producers that steals all of the views in the music category think of supply and demand, although there is a lot of demand for the music category, the bigger creators capitalise on that and then when they provide the supply (the video), the algorithm helps that creator get all of the views and then your video doesn't get any recommendations which results in little to no views. It is unwise to do the music category due to the high amount of skill required.")
     
     # In[14]:
     
@@ -523,7 +523,7 @@ if selected == "Data Analysis":
     #Much more even!
     st.plotly_chart(fig7)
     
-    st.markdown("Ok, so now the distribution is much more even. The top scoreres includes Comedy, Entertainment, Gaming and science and technology! This means that you should definately consider choosing the categories listed above if you are going for overall good recession")
+    st.markdown("Ok, so now the distribution is much more even. The top scoreres includes Comedy, Entertainment, Gaming and science and technology! This means that you should definately consider choosing the categories listed above if you are going for overall good reception")
     
     
     # In[20]:
@@ -532,8 +532,7 @@ if selected == "Data Analysis":
     st.markdown("Now lets explore the distribution of the views between the different category id's with the power of a pie chart")
     
     df = combined_nodupe
-    df.loc[df['views'] < 2000000, 'category_id'] = 'Other categories'
-    fig9 = px.pie(df, values='views', names='category_id', title='Views')
+    fig9 = px.pie(df, values='views', names='category', title='Views')
     
     # 
     
