@@ -592,7 +592,7 @@ if selected == "Data Analysis":
     
     st.markdown("Last cell, we explored the distribution regarding how fast the videos trend. So yeah, there are more blogs and entertainment than most of the others combined.")
     under_7_days = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(7, units = "days")]
-    fig15 = px.bar(under_7_days.value_counts("category"), color="category")
+    fig15 = px.bar(under_7_days["category"].value_counts().reset_index(),x="index", y = "category", color = "index", labels ={"index": "Category", "category": "Counts"})
     fig15.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.subheader("Bar chart - Amount of videos that trend within a week (by category)")
     
@@ -615,7 +615,8 @@ if selected == "Data Analysis":
     
     st.markdown("Finally, lets take a look at the ones that take average time to trend. Above a week and below a month")
     below_1_month = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(1, units = "months")]
-    fig17 = px.bar(below_1_month.value_counts("category"),color="category")
+    fig17 = px.bar(below_1_month["category"].value_counts().reset_index(),x="index", y = "category",color="index", labels ={"index": "Category", "category": "Counts"})
+    fig17.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.subheader("Bar chart - Average trending time below a month (by category)")
     st.plotly_chart(fig17)
     
