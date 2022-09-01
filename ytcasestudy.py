@@ -566,9 +566,9 @@ if selected == "Data Analysis":
     st.subheader("Bar chart - Time to Trending bars")
     st.markdown("Lets explore the time taken for videos to trend! This should give us some information")
     fig13 = px.histogram(combined_nodupe, x="time_to_trending", height=600, width = 900
-                ,color_discrete_sequence=px.colors.qualitative.Dark24, range_x = [0,10], nbins=1)
+                ,color_discrete_sequence=px.colors.qualitative.Dark24, range_x = [0,10], nbins=10)
     fig13.update_layout(xaxis_title = "Time to Trending")
-
+    
     st.plotly_chart(fig13)
     
     
@@ -593,6 +593,7 @@ if selected == "Data Analysis":
     fig15 = px.bar(under_7_days.value_counts("category"))
     fig15.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.subheader("Bar chart - Amount of videos that trend within a week (by category)")
+    
     st.plotly_chart(fig15)
     
     
@@ -663,6 +664,7 @@ if selected == "Data Analysis":
                     ,height = 1500, width = 900, log_y = True)
     
     fig26.update_layout(xaxis_title = "Time of Day", yaxis_title = roption7.title())
+    st.markdown("From this box plot we can tell that the YouTube platform does have averaging the same amount of views/likes/dislikes accross different times of days. This might be because of the fact that they are a TNC. A Transnational Corporation. This means that they operate all across the world, from America to Asia!")
     col2_7.plotly_chart(fig26)
     
     
@@ -673,6 +675,7 @@ if selected == "Data Analysis":
     fig27 = px.histogram(combined_nodupe, x="time_of_day", y="views", color = "is_weekend", 
                  color_discrete_sequence=px.colors.qualitative.Light24, animation_frame = "category", barmode = "group", histfunc = "avg",
                        category_orders = {"time_of_day": ["Morning", "Afternoon", "Evening", "Late night"]}, height = 800, width = 1000)
+    st.markdown("Just a chart for those who didn't really fully understand the box plots.")
     st.plotly_chart(fig27)
     
     
