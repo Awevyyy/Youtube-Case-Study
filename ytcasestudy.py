@@ -565,7 +565,7 @@ if selected == "Data Analysis":
     
     st.subheader("Bar chart - Time to Trending bars")
     st.markdown("Lets explore the time taken for videos to trend! This should give us some information")
-    fig13 = px.histogram(combined_nodupe[combined_nodupe["time_to_trending"] <= pd.timedelta("days",10)], x="time_to_trending", height=600, width = 900
+    fig13 = px.histogram(combined_nodupe[combined_nodupe["time_to_trending"] <= pd.timedelta(10, units="days")], x="time_to_trending", height=600, width = 900
                 ,color_discrete_sequence=px.colors.qualitative.Dark24, nbins=10)
     fig13.update_layout(xaxis_title = "Time to Trending")
     
