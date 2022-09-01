@@ -567,9 +567,11 @@ if selected == "Data Analysis":
     st.markdown("Lets explore the time taken for videos to trend! This should give us some information")
     fig13 = px.histogram(combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(10, units="days")], x="time_to_trending", height=600, width = 900
                 ,color_discrete_sequence=px.colors.qualitative.Dark24, nbins=10)
-    fig13.update_layout(xaxis_title = "Time to Trending")
+    fig13.update_layout(xaxis_title = "Time to Trending", xaxis_dtick = 1)
     
     st.plotly_chart(fig13)
+    st.markdown("From this bar chart we can conclude that almost all of YouTube videos reach their peak inflow of views within a day. Although there are clearly some exceptions. So if your video doesn't get more views after 1 day, it will probably not be recomended by the YouTube algorithm anymore!")
+    
     
     
     
