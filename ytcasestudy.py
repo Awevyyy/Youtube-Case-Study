@@ -565,8 +565,8 @@ if selected == "Data Analysis":
     
     st.subheader("Bar chart - Time to Trending bars")
     st.markdown("Lets explore the time taken for videos to trend! This should give us some information")
-    fig13 = px.histogram(combined_nodupe, x="time_to_trending", height=600, width = 900
-                ,color_discrete_sequence=px.colors.qualitative.Dark24, range_x = [0,10], nbins=10)
+    fig13 = px.histogram(combined_nodupe[combined_nodupe["time_to_trending"] <= pd.timedelta("days",7)], x="time_to_trending", height=600, width = 900
+                ,color_discrete_sequence=px.colors.qualitative.Dark24, nbins=8)
     fig13.update_layout(xaxis_title = "Time to Trending")
     
     st.plotly_chart(fig13)
@@ -644,7 +644,7 @@ if selected == "Data Analysis":
     fig23.update_layout(xaxis_title = "category".title())
     col2_6.plotly_chart(fig23)
     
-    
+        
     # In[35]:
     
     
