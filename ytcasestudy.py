@@ -446,8 +446,8 @@ if selected == "Data Analysis":
     st.markdown("Now lets calculate the average amounts of views the different categories get by using df.groupby")
     grouped_by_category = combined_nodupe.groupby("category").mean()
     fig2 = px.bar(grouped_by_category.sort_values("views"), x=grouped_by_category.index, y='views', color='views', height=600, width = 900
-                ,color_continuous_scale=px.colors.sequential.Viridis)
-    
+                ,color_continuous_scale=px.colors.sequential.Viridis, labels = {"views": "Views", "x": "Category"})
+    fig2.update_layout()
     st.subheader("Bar graph - Average views each category gets.")
     st.plotly_chart(fig2)
     
