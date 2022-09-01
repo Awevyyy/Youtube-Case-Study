@@ -350,7 +350,7 @@ if selected == "Data Exploration":
     col1_1,col2_1 = st.columns([1,5])
     col1_1.subheader('Bar Comparison of Different Times')
     roption1 = col1_1.selectbox(
-     'Please select the value you wold like to explore',
+     'Please select the value you would like to explore',
      ("views", "likes", "dislikes", "like_dislike_ratio"))
     
     fig4 = px.bar(grouped_by_category, x="category", y=roption1, height=600, width = 900
@@ -363,7 +363,7 @@ if selected == "Data Exploration":
     col1_4,col2_4 = st.columns([1,5])
     col1_4.subheader('Box Plot of Weekdays')
     roption4 = col1_4.selectbox(
-         'Please select the value you wold like to explore',
+         'Please select the value you would like to explore',
          ("views", "likes", "dislikes", "comment_count"))
     
     
@@ -389,7 +389,7 @@ if selected == "Data Exploration":
     col1_5,col2_5 = st.columns([1,5])
     col1_5.subheader('Box Plot Simulator (Custom "y" Variables)')
     roption5 = col1_5.selectbox(
-     'Please select the value you wold like to explore',
+     'Please select the value you would like to explore',
      ("views", "likes", "dislikes", "comment_count"), key = "5ru08wefj0isdfghjwe90gh3490tyh890h")
     
     fig22 = px.box(combined_nodupe, category_orders = {"weekday": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]},
@@ -402,7 +402,7 @@ if selected == "Data Exploration":
     col1,col2 = st.columns([1,5])
     col1.subheader('Bar Comparison of the 24 Hours')
     roption = col1.selectbox(
-     'Please select the value you wold like to explore',
+     'Please select the value you would like to explore',
      ("views", "likes", "dislikes"))
     
     fig28 = px.histogram(combined_nodupe, y="hour_cat", x=roption, color = "weekday or weekend", animation_frame = "category"
@@ -548,7 +548,7 @@ if selected == "Data Analysis":
     
     col1_3,col2_3 = st.columns([1,5])
     roption3 = col1_3.selectbox(
-     'Please select the value you wold like to explore',
+     'Please select the value you would like to explore',
      ("views", "likes", "dislikes", "comment_count"))
     
     
@@ -631,7 +631,7 @@ if selected == "Data Analysis":
     col1_6,col2_6 = st.columns([1,5])
     col1_6.subheader('Box plot simulator')
     roption6 = col1_6.selectbox(
-         'Please select the value you wold like to explore',
+         'Please select the value you would like to explore',
          ("views", "likes", "dislikes", "comment_count"), key = "df0isdnhiokenriogenriogfneriogn")
     
     
@@ -655,7 +655,7 @@ if selected == "Data Analysis":
     col1_7,col2_7 = st.columns([1,5])
     col1_7.subheader('Another box plot simulator (time of day)')
     roption7 = col1_7.selectbox(
-         'Please select the value you wold like to explore',
+         'Please select the value you would like to explore',
          ("views", "likes", "dislikes", "comment_counts"))
     
     st.markdown("Lets find which time of day should you post which category!")
