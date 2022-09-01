@@ -563,7 +563,7 @@ if selected == "Data Analysis":
     
     # In[24]:
     
-    st.subheader("Bar chart - Time to Trending bars")
+    st.subheader("Histogram - Time to Trending bars")
     st.markdown("Lets explore the time taken for videos to trend! This should give us some information")
     fig13 = px.histogram(combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(10, units="days")], x="time_to_trending", height=600, width = 900
                 ,color_discrete_sequence=px.colors.qualitative.Dark24, nbins=10)
@@ -593,7 +593,7 @@ if selected == "Data Analysis":
     st.markdown("Last cell, we explored the distribution regarding how fast the videos trend. So yeah, there are more blogs and entertainment than most of the others combined.")
     under_7_days = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(7, units = "days")]
     fig15 = px.bar(under_7_days.value_counts("category"))
-    fig15.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
+    #fig15.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.subheader("Bar chart - Amount of videos that trend within a week (by category)")
     
     st.plotly_chart(fig15)
