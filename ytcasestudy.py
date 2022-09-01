@@ -474,7 +474,7 @@ if selected == "Data Analysis":
     fig3.update_layout(xaxis_title = "Category", yaxis_title = "views")
     fig3.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     
-    st.subheader("Bar chart - Different categories across RU,GB,US")
+    st.subheader("Bar chart - Different categories across Russia, United States, Great Britain")
     st.plotly_chart(fig3)
                       
     
