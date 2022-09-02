@@ -314,6 +314,8 @@ if selected == "Data Cleaning":
 if selected == "Data Exploration":
     st.markdown("# Data Exploration")
     
+    st.markdown("How to operate the plots: Click the drop down menu to change the variable that you would like to explore. ")
+    
     st.markdown("scatter plots are great for exploring the correlation between different variables so first we need to choose between 2 different numeric variables to determine their relationship. Additionally, we can choose a categorical variable to further explore the grouped points belonging to the same category! (through the same colour)")
     
     
@@ -489,8 +491,6 @@ if selected == "Data Analysis":
     
     # In[16]:
     
-    
-    st.markdown("As we can see from above, The highest like to dislike ratio category is the Pets and Animals category. This means that people love pets and if you show your pets on camera they will like and subscribe. Thus if you have a cute or even exotic pet you can just show them on a camera and make some edits and you will receive many views!")
     st.markdown("Closely behind is Music, which has high production costs thus is not a good choice for people not investing loads.")
     
     st.markdown("Now lets take a look at the average amount of dislikes, to conclude which one you as a creator should not be creating content on")
@@ -573,7 +573,12 @@ if selected == "Data Analysis":
     st.markdown("From this bar chart we can conclude that almost all of YouTube videos reach their peak inflow of views within a day. Although there are clearly some exceptions. So if your video doesn't get more views after 1 day, it will probably not be recomended by the YouTube algorithm anymore!")
     
     
+    st.subheader("Pie chart - Individual music videos")
     
+    df = combined_nodupe[combined_nodupe["category"] == "Music"]
+    df.loc[df["views"] <= 1000000, "title"] = "Other entries"
+    fig91 = px.pie(df, values='views', names='title', title='Views')
+    st.plotly_chart(fig91)
     
     # In[25]:
     
@@ -601,14 +606,6 @@ if selected == "Data Analysis":
     
     # In[27]:
     
-    """
-    st.markdown("Lets now take a look at those videos which take a lot longer to trend. Namely the ones that take over 2 years to resurface on your recommended")
-    over_2_years = combined_nodupe.loc[combined_nodupe["time_to_trending"] <= pd.Timedelta(2, units = "years")]
-    fig16 = px.bar(over_2_years["category"].value_counts())
-    fig16.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
-    st.plotly_chart(fig16)
-   """
-    
     
     # In[28]:
     
@@ -619,6 +616,7 @@ if selected == "Data Analysis":
     fig17.update_layout(xaxis_title = "Category", yaxis_title = "Counts")
     st.subheader("Bar chart - Average trending time below a month (by category)")
     st.plotly_chart(fig17)
+    st.markdown("We can see that there are the most videos in the People & Blogs category that trends below a month. So basically all of it")
     
     
     # In[30]:
@@ -626,10 +624,11 @@ if selected == "Data Analysis":
     
     fig19 = px.box(combined_nodupe.loc[combined_nodupe["time_to_trending"] >= pd.Timedelta(1, units="week")], "category", "time_to_trending", 
                  color="category", hover_name = "title", range_y = [0,50]) 
-    fig19.update_layout(xaxis_title = "Category", yaxis_title ="Time to Trending")
+    fig19.update_layout(xaxis_title = "Category", yaxis_title ="Time to Trending (Weeks)")
     st.subheader("Box Plot - Time to Trending above one week visualised")
     st.plotly_chart(fig19)
     
+    st.markdown("From this graph we can tell that Music and People & Blogs and Travel & Events actually trend the slowest. This box plot also allows us to see the many anomalous results, videos that trend much later in a timeline!")
         
     col1_6,col2_6 = st.columns([1,5])
     col1_6.subheader('Box plot simulator')
@@ -641,7 +640,7 @@ if selected == "Data Analysis":
     st.markdown("Now we will group by week days and weekends. letsa see the views difference")
     grouped_by_week = combined_nodupe.groupby(["is_weekend", "country", "category"]).mean().reset_index()
     fig23 = px.box(grouped_by_week, x="category", y=roption6, color = "is_weekend", 
-                 color_discrete_sequence=px.colors.qualitative.Alphabet)
+                 color_discrete_sequence=px.colors.qualitative.Alphabet, labels = {"is_weekend": "Weekend"})
     
     fig23.update_layout(yaxis_title = roption6.title())
     fig23.update_layout(xaxis_title = "category".title())
@@ -664,7 +663,7 @@ if selected == "Data Analysis":
     st.markdown("Lets find which time of day should you post which category!")
     fig26 = px.box(combined_nodupe, x="time_of_day", y=roption7, color = "is_weekend", 
                  color_discrete_sequence=px.colors.qualitative.Light24, animation_frame = "category"
-                    ,height = 1500, width = 900, log_y = True)
+                    ,height = 1500, width = 900, log_y = True, labels = {"is_weekend": "Weekend"})
     
     fig26.update_layout(xaxis_title = "Time of Day", yaxis_title = roption7.title())
     st.markdown("From this box plot we can tell that the YouTube platform does have averaging the same amount of views/likes/dislikes accross different times of days. This might be because of the fact that they are a TNC. A Transnational Corporation. This means that they operate all across the world, from America to Asia!")
@@ -677,7 +676,7 @@ if selected == "Data Analysis":
     st.markdown("Now lets do the same graph but as a bar chart")
     fig27 = px.histogram(combined_nodupe, x="time_of_day", y="views", color = "is_weekend", 
                  color_discrete_sequence=px.colors.qualitative.Light24, animation_frame = "category", barmode = "group", histfunc = "avg",
-                       category_orders = {"time_of_day": ["Morning", "Afternoon", "Evening", "Late night"]}, height = 800, width = 1000)
+                       category_orders = {"time_of_day": ["Morning", "Afternoon", "Evening", "Late night"]}, height = 800, width = 1000, labels = {"is_weekend": "Weekend"})
     st.markdown("Just a chart for those who didn't really fully understand the box plots.")
     st.plotly_chart(fig27)
     
@@ -712,18 +711,22 @@ if selected == "Data Analysis":
     
     st.markdown("Lets find which time of day will you get the most likes")
     
-    fig29 = px.histogram(combined_nodupe, y="hour_cat", x="likes", color = "is_weekend", animation_frame = "category"
+    fig29 = px.histogram(combined_nodupe, y="hour_cat", x="likes",color = "weekday or weekend", animation_frame = "category"
                     ,height = 900, width = 900, histfunc = "avg",
                       category_orders = {"hour_cat": np.arange(24)},
-                      color_discrete_map={True:"lightgreen", False:"#FFA500"},
-                      facet_col="is_weekend")
-    fig29.update_layout(yaxis_title="average of views (in this hour)")
-    fig29.update_layout(xaxis_title="hour")
+                      color_discrete_map={"Weekend":"lightgreen", "Weekday":"#FFA500"},
+                      facet_col="weekday or weekend")
+    fig29.update_layout(yaxis_title="Average of views (in this hour)")
+    fig29.update_layout(xaxis_title="Hour")
     fig29.update_layout(title="Weekend vs Weekdays.")
     fig29.update_traces(marker_line_color = "black", marker_line_width = 1.5)
-    fig29.update_layout(bargap = 0.5)
+    fig29.update_layout(bargap = 0.5, showlegend = False)
+    
+    fig29.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     #fig.update_yaxes(autorange="reversed")
     #fig.update_xaxes(type='category')
+    fig29.update_layout(yaxis_title="Hours", yaxis_dtick = 1)
+    fig29.update_layout(xaxis_title="Average of Likes (in this hour)", xaxis2_title = "Average of Likes (in this hour)")
     st.subheader("Bar chart - Weekend vs Weekdays likes count")
     st.plotly_chart(fig29)
     
@@ -733,19 +736,22 @@ if selected == "Data Analysis":
     
     st.markdown("Lets find which time of day will you get the most dislikes")
     
-    fig30 = px.histogram(combined_nodupe, y="hour_cat", x="dislikes", color = "is_weekend", animation_frame = "category"
+    fig30 = px.histogram(combined_nodupe, y="hour_cat", x="dislikes", color = "weekday or weekend", animation_frame = "category"
                     ,height = 900, width = 900, histfunc = "avg",
                       category_orders = {"hour_cat": np.arange(24)},
-                      color_discrete_map={True:"lightgreen", False:"#FFA500"},
-                      facet_col="is_weekend")
-    fig30.update_layout(yaxis_title="average of views (in this hour)")
-    fig30.update_layout(xaxis_title="hour")
+                      color_discrete_map={"Weekend":"lightgreen", "Weekday":"#FFA500"},
+                      facet_col="weekday or weekend")
+    fig30.update_layout(yaxis_title="Average of views (in this hour)")
+    fig30.update_layout(xaxis_title="Hour")
     fig30.update_layout(title="Weekend vs Weekdays.")
     fig30.update_traces(marker_line_color = "black", marker_line_width = 1.5)
-    fig30.update_layout(bargap = 0.5)
+    fig30.update_layout(bargap = 0.5, showlegend = False)
+    fig30.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     #fig.update_yaxes(autorange="reversed")
     #fig.update_xaxes(type='category')
     st.subheader("Bar chart - Weekend vs Weekdays dislikes count")
+    fig30.update_layout(yaxis_title="Hours", yaxis_dtick = 1)
+    fig30.update_layout(xaxis_title="Average of Dislikes (in this hour)", xaxis2_title = "Average of Dislikes (in this hour)")
     st.plotly_chart(fig30)
     
     st.markdown("From these 2 graphs of similar fashion above, we can conclude that the videos you post during the weekdays will be the most popular at 6am or 22am US time.")
