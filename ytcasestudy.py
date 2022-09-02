@@ -517,11 +517,13 @@ if selected == "Data Analysis":
         
     st.markdown("Wow! From this graph we can see that music beats everything else in terms of the best overall / derived value! That is absolutely insane! However, music is very good but to make a Music video but the production cost is way too high! So lets drop it from our next graph to explore the rest, another option of you do not have that much production power")
     
-    st.subheader("Pie chart - Individual music videos")
+    st.subheader("Describe chart - Individual music videos")
     df = combined_nodupe[combined_nodupe["category"] == "Music"]
-    df.loc[df["views"] <= 10000000, "title"] = "Other entries"
-    fig91 = px.pie(df, values='views', names='title', title='Views')
-    st.plotly_chart(fig91)
+    #df.loc[df["views"] <= 10000000, "title"] = "Other entries"
+    #fig91 = px.pie(df, values='views', names='title', title='Views', height = 800, width = 800)
+    #st.plotly_chart(fig91)
+    st.write(df.loc[df["views"] >= 1500000].shape)
+    st.plotly_chart(px.box(df, y="views"))
     
     # In[18]:
     
@@ -538,7 +540,28 @@ if selected == "Data Analysis":
     
     st.markdown("Ok, so now the distribution is much more even. The top scoreres includes Comedy, Entertainment, Gaming and science and technology! This means that you should definately consider choosing the categories listed above if you are going for overall good reception")
     
+    top5percent_ids = []
+    for cat in combined_nodupe["category"].unique():
+        tmp_df = combined_nodupe.loc[combined_nodupe["category"]==cat].copy()
+        quant_95 = np.quantile(combined_nodupe["views"], 0.90)
+        top5_ind = np.where(tmp_df["views"]<=quant_95)
+        top5percent_ids.append(tmp_df.title.iloc[top5_ind].index.to_list())
+        
     
+    new_df = combined_nodupe.loc[np.concatenate(top5percent_ids)]
+    newgroup = new_df.groupby("category").mean().reset_index()
+    
+    factor = 5
+    newgroup["value"] = (((newgroup["likes"]-newgroup["dislikes"]) * factor) + newgroup["views"]) *      newgroup["like_dislike_ratio"]
+    
+    fig61 = px.bar(newgroup, x="category", y='views', height=600, width = 900
+                ,color_continuous_scale=px.colors.sequential.Viridis, color="views")
+    
+    fig61.update_layout(xaxis_title = "Category", yaxis_title = "Combined/Derived Value")
+    st.subheader("Bar chart - Average of views with top 10% REMOVED")
+    
+    st.markdown("We removed the top 10% of videos (in terms of views) in each category. what happens next is SHOCKING. Music is no longer the top choice when we removed all of the outliers")
+    st.plotly_chart(fig61)
     
     
     # In[20]:
