@@ -522,8 +522,6 @@ if selected == "Data Analysis":
     #df.loc[df["views"] <= 10000000, "title"] = "Other entries"
     #fig91 = px.pie(df, values='views', names='title', title='Views', height = 800, width = 800)
     #st.plotly_chart(fig91)
-    st.write(df.loc[df["views"] >= 1500000].shape)
-    st.plotly_chart(px.box(df, y="views"))
     
     # In[18]:
     
