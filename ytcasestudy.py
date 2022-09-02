@@ -517,7 +517,6 @@ if selected == "Data Analysis":
         
     st.markdown("Wow! From this graph we can see that music beats everything else in terms of the best overall / derived value! That is absolutely insane! However, music is very good but to make a Music video but the production cost is way too high! So lets drop it from our next graph to explore the rest, another option of you do not have that much production power")
     
-    st.subheader("Describe chart - Individual music videos")
     df = combined_nodupe[combined_nodupe["category"] == "Music"]
     #df.loc[df["views"] <= 10000000, "title"] = "Other entries"
     #fig91 = px.pie(df, values='views', names='title', title='Views', height = 800, width = 800)
