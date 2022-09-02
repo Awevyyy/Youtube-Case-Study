@@ -517,6 +517,12 @@ if selected == "Data Analysis":
         
     st.markdown("Wow! From this graph we can see that music beats everything else in terms of the best overall / derived value! That is absolutely insane! However, music is very good but to make a Music video but the production cost is way too high! So lets drop it from our next graph to explore the rest, another option of you do not have that much production power")
     
+    st.subheader("Pie chart - Individual music videos")
+    df = combined_nodupe[combined_nodupe["category"] == "Music"]
+    df.loc[df["views"] <= 10000000, "title"] = "Other entries"
+    fig91 = px.pie(df, values='views', names='title', title='Views')
+    st.plotly_chart(fig91)
+    
     # In[18]:
     
     grouped_by_category_no_music = grouped_by_category.drop(8).reset_index()
@@ -531,6 +537,8 @@ if selected == "Data Analysis":
     st.plotly_chart(fig7)
     
     st.markdown("Ok, so now the distribution is much more even. The top scoreres includes Comedy, Entertainment, Gaming and science and technology! This means that you should definately consider choosing the categories listed above if you are going for overall good reception")
+    
+    
     
     
     # In[20]:
@@ -572,13 +580,7 @@ if selected == "Data Analysis":
     st.plotly_chart(fig13)
     st.markdown("From this bar chart we can conclude that almost all of YouTube videos reach their peak inflow of views within a day. Although there are clearly some exceptions. So if your video doesn't get more views after 1 day, it will probably not be recomended by the YouTube algorithm anymore!")
     
-    
-    st.subheader("Pie chart - Individual music videos")
-    
-    df = combined_nodupe[combined_nodupe["category"] == "Music"]
-    df.loc[df["views"] <= 1000000, "title"] = "Other entries"
-    fig91 = px.pie(df, values='views', names='title', title='Views')
-    st.plotly_chart(fig91)
+
     
     # In[25]:
     
